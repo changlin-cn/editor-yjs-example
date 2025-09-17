@@ -4,9 +4,14 @@ import { WebsocketProvider } from 'y-websocket';
 import { Y_WEBSOCKET_ENDPOINT_URL } from '../../config';
 import { Editor } from '../../components/Editor';
 import { slateNodesToInsertDelta } from '@slate-yjs/core';
+import { ConnectionToggle } from '../../components/ConnectionToggle/ConnectionToggle';
 
 export function RemoteCursorsOverlayPage() {
   const roomName = 'slate-yjs-demo';
+
+  const [connected, setConnected] = useState(false);
+
+  const [synced,setSynced] = useState(false)
 
   const { doc, provider } = useMemo(() => {
     const doc = new Y.Doc();
@@ -91,6 +96,32 @@ export function RemoteCursorsOverlayPage() {
     persist(versions.filter(v => v.id !== id));
   }, [versions, persist]);
 
+  const toggleConnection = useCallback(() => {
+    if (connected) {
+      return provider.disconnect();
+    }
+
+    provider.connect();
+  }, [provider, connected]);
+
+  
+  useEffect(() => {
+    provider.on('status', (event: { status: 'connected' | 'disconnected' | 'connecting' }) => {
+      setConnected(event.status === 'connected');
+    });
+    provider.on('sync',(s)=>{
+      if(s){
+        setSynced(true)
+      }
+    })
+    provider.connect();
+    return () => provider.disconnect();
+  }, [provider]);
+
+
+
+
+
   return (
     <div className="mx-10 my-6" style={{display:'flex'}}>
       <div>
@@ -135,13 +166,17 @@ export function RemoteCursorsOverlayPage() {
           ))}
         </div>
       </div>
-      </div>
+      <ConnectionToggle connected={connected} onClick={toggleConnection} />
 
-      <Editor
+      </div>
+      {
+        synced &&  <Editor
         YDoc={doc}
         provider={provider}
         onValueChange={(v) => { latestValueRef.current = v; }}
       />
+      }
+     
     </div>
   );
 }

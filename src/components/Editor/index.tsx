@@ -15,25 +15,18 @@ import { randomCursorData } from '../../utils';
 import { RemoteCursorOverlay } from './Overlay';
 import { RichToolbar } from './RichToolbar';
 
-interface IProps{
+interface IProps {
   YDoc: Y.Doc;
   provider: WebsocketProvider;
   onValueChange?: (value: Descendant[]) => void;
 }
 
-export function Editor(props:IProps) {
+export function Editor(props: IProps) {
   const [value, setValue] = useState<Descendant[]>([]);
-  const [connected, setConnected] = useState(false);
 
   const { YDoc: doc, provider } = props
 
-  const toggleConnection = useCallback(() => {
-    if (connected) {
-      return provider.disconnect();
-    }
-
-    provider.connect();
-  }, [provider, connected]);
+  
 
   const editor = useMemo(() => {
     const sharedType = doc.get('content', Y.XmlText) as Y.XmlText;
@@ -57,20 +50,15 @@ export function Editor(props:IProps) {
 
   // Connect editor and provider in useEffect to comply with concurrent mode
   // requirements.
-  useEffect(() => {
-    provider.on('status', (event: { status: 'connected' | 'disconnected' | 'connecting' }) => {
-      setConnected(event.status === 'connected');
-    });
-    provider.connect();
-    return () => provider.disconnect();
-  }, [provider]);
+  
+
   useEffect(() => {
     YjsEditor.connect(editor);
     return () => YjsEditor.disconnect(editor);
   }, [editor]);
 
   return (
-    <div style={{border:'solid 1px blue',padding:10}}>
+    <div style={{ border: 'solid 1px blue', padding: 10 }}>
       <Slate
         editor={editor}
         initialValue={value}
@@ -86,7 +74,6 @@ export function Editor(props:IProps) {
           <FormatToolbar />
           <CustomEditable />
         </RemoteCursorOverlay>
-        <ConnectionToggle connected={connected} onClick={toggleConnection} />
       </Slate>
     </div>
   );
