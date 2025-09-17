@@ -14,21 +14,17 @@ import { withNormalize } from '../../plugins/withNormalize';
 import { randomCursorData } from '../../utils';
 import { RemoteCursorOverlay } from './Overlay';
 
+interface IProps{
+  YDoc: Y.Doc;
+  provider: WebsocketProvider;
+  onValueChange?: (value: Descendant[]) => void;
+}
 
-export function Editor() {
+export function Editor(props:IProps) {
   const [value, setValue] = useState<Descendant[]>([]);
   const [connected, setConnected] = useState(false);
 
-  const { doc, provider } = useMemo(() => {
-    const doc = new Y.Doc();
-    const provider = new WebsocketProvider(
-      Y_WEBSOCKET_ENDPOINT_URL,
-      'slate-yjs-demo',
-      doc,
-      { connect: false }
-    );
-    return { doc, provider };
-  }, []);
+  const { YDoc: doc, provider } = props
 
   const toggleConnection = useCallback(() => {
     if (connected) {
@@ -74,7 +70,14 @@ export function Editor() {
 
   return (
     <React.Fragment>
-      <Slate editor={editor} initialValue={value} onChange={setValue}>
+      <Slate
+        editor={editor}
+        initialValue={value}
+        onChange={(val) => {
+          setValue(val);
+          props.onValueChange?.(val);
+        }}
+      >
         <RemoteCursorOverlay className="flex justify-center my-32 mx-10">
           <FormatToolbar />
           <CustomEditable className="max-w-4xl w-full flex-col break-words" />
