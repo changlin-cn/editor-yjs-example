@@ -3,7 +3,7 @@ import React from 'react';
 import './style.css';
 
 export function Element({ element, attributes, children }: RenderElementProps) {
-  switch (element.type) {
+  switch ((element as any).type) {
     case 'heading-one':
       return (
         <h1 {...attributes} className="text-5xl my-5">
@@ -15,6 +15,25 @@ export function Element({ element, attributes, children }: RenderElementProps) {
         <h2 {...attributes} className="text-3xl my-2">
           {children}
         </h2>
+      );
+      
+    case 'bulleted-list':
+      return (
+        <ul {...attributes} className="list-disc ml-6 my-2">
+          {children}
+        </ul>
+      );
+    case 'numbered-list':
+      return (
+        <ol {...attributes} className="list-decimal ml-6 my-2">
+          {children}
+        </ol>
+      );
+    case 'list-item':
+      return (
+        <li {...attributes} className="mb-1">
+          {children}
+        </li>
       );
     case 'inline-code':
       return (

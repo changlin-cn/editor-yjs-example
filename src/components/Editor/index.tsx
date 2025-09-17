@@ -13,6 +13,7 @@ import { withMarkdown } from '../../plugins/withMarkdown';
 import { withNormalize } from '../../plugins/withNormalize';
 import { randomCursorData } from '../../utils';
 import { RemoteCursorOverlay } from './Overlay';
+import { RichToolbar } from './RichToolbar';
 
 interface IProps{
   YDoc: Y.Doc;
@@ -69,7 +70,7 @@ export function Editor(props:IProps) {
   }, [editor]);
 
   return (
-    <React.Fragment>
+    <div style={{border:'solid 1px blue',padding:10}}>
       <Slate
         editor={editor}
         initialValue={value}
@@ -78,12 +79,15 @@ export function Editor(props:IProps) {
           props.onValueChange?.(val);
         }}
       >
-        <RemoteCursorOverlay className="flex justify-center my-32 mx-10">
+        <div className="max-w-4xl w-full mx-auto">
+          <RichToolbar />
+        </div>
+        <RemoteCursorOverlay >
           <FormatToolbar />
-          <CustomEditable className="max-w-4xl w-full flex-col break-words" />
+          <CustomEditable />
         </RemoteCursorOverlay>
         <ConnectionToggle connected={connected} onClick={toggleConnection} />
       </Slate>
-    </React.Fragment>
+    </div>
   );
 }

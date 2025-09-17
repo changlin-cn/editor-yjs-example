@@ -92,7 +92,8 @@ export function RemoteCursorsOverlayPage() {
   }, [versions, persist]);
 
   return (
-    <div className="mx-10 my-6">
+    <div className="mx-10 my-6" style={{display:'flex'}}>
+      <div>
       <div className="flex items-center gap-2 mb-4">
         <button
           type="button"
@@ -133,6 +134,7 @@ export function RemoteCursorsOverlayPage() {
             </div>
           ))}
         </div>
+      </div>
       </div>
 
       <Editor

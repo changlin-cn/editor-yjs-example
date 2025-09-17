@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "APP_ENV=production vite build",
     "serve": "vite preview",
     "deploy": "yarn netlify deploy --prod --dir ./dist",
